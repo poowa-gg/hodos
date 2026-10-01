@@ -549,8 +549,7 @@ function attachParentActions() {
   }
 
   // Save as PDF button — builds the PDF in the browser and downloads it
-  // directly, no printer dialog. If the download is blocked by the browser,
-  // a small card with manual save/open links appears under the toolbar.
+  // directly to the device. No printer dialog, no extra UI.
   const pdfBtn = document.getElementById('print-btn');
   if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
@@ -568,14 +567,12 @@ function attachParentActions() {
       try {
         const doc = generateParentSummaryPDF(jsPdfConstructor);
         const blob = doc.output('blob');
-        const filename = 'Hodos-Parent-Summary.pdf';
 
-        // Keep only the newest blob URL alive — the fallback card links to it
+        // Keep only the newest blob URL alive
         if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
         lastPdfUrl = URL.createObjectURL(blob);
 
-        triggerDownload(lastPdfUrl, filename);
-        showPdfReadyCard(lastPdfUrl, filename);
+        triggerDownload(lastPdfUrl, 'Hodos-Parent-Summary.pdf');
       } catch (err) {
         console.error('PDF generation failed, falling back to print dialog:', err);
         window.print();
@@ -591,31 +588,16 @@ function triggerDownload(url, filename) {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
-  a.style.display = 'none';
+  a.rel = 'noopener';
+  // Off-screen instead of display:none — some browsers ignore the download
+  // attribute on anchors that are not rendered.
+  a.style.position = 'fixed';
+  a.style.left = '-9999px';
+  a.style.opacity = '0';
   document.body.appendChild(a);
   a.click();
-  setTimeout(() => a.remove(), 1000);
-}
-
-function showPdfReadyCard(url, filename) {
-  const toolbar = document.querySelector('.parent-toolbar');
-  if (!toolbar) return;
-
-  let card = document.getElementById('pdf-download-card');
-  if (!card) {
-    card = document.createElement('div');
-    card.id = 'pdf-download-card';
-    card.className = 'pdf-download-card';
-    card.setAttribute('role', 'status');
-    toolbar.insertAdjacentElement('afterend', card);
-  }
-
-  card.innerHTML = `
-    <p class="pdf-download-card__msg">Your PDF download should start automatically. If it didn't, use a button below.</p>
-    <div class="pdf-download-card__actions">
-      <a class="btn-secondary pdf-download-card__link" href="${url}" download="${filename}">Save PDF</a>
-      <a class="btn-secondary pdf-download-card__link" href="${url}" target="_blank" rel="noopener">Open PDF</a>
-    </div>`;
+  // Give the browser time to start the download before removing the anchor.
+  setTimeout(() => a.remove(), 40000);
 }
 
 // ─── PDF Generation (Parent Mode) ─────────────────────────────────────────────

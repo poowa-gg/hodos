@@ -512,7 +512,7 @@ function renderParentsTab() {
       <button class="btn-secondary" id="copy-btn" aria-label="Copy parent summary text">
         Copy text
       </button>
-      <button class="btn-secondary" id="pdf-btn" aria-label="Save as PDF">
+      <button class="btn-secondary" id="print-btn" aria-label="Save as PDF">
         Save as PDF
       </button>
     </div>`;
@@ -548,73 +548,74 @@ function attachParentActions() {
     });
   }
 
-  // Save as PDF button (direct download without printer dialog)
-  const pdfBtn = document.getElementById('pdf-btn') || document.getElementById('print-btn');
+  // Save as PDF button — builds the PDF in the browser and downloads it
+  // directly, no printer dialog. If the download is blocked by the browser,
+  // a small card with manual save/open links appears under the toolbar.
+  const pdfBtn = document.getElementById('print-btn');
   if (pdfBtn) {
-    pdfBtn.addEventListener('click', async () => {
-      const originalText = pdfBtn.textContent;
-      pdfBtn.textContent = 'Saving PDF…';
+    pdfBtn.addEventListener('click', () => {
+      // Make sure the Parent Mode tab is visible
+      const parentsBtn = document.getElementById('tab-parents-btn');
+      if (parentsBtn) parentsBtn.click();
+
+      const jsPdfConstructor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+      if (!jsPdfConstructor) {
+        // jsPDF failed to load — fall back to the browser's print dialog
+        window.print();
+        return;
+      }
+
       try {
-        const jsPdfConstructor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-        if (!jsPdfConstructor) {
-          throw new Error('jsPDF library not loaded');
-        }
         const doc = generateParentSummaryPDF(jsPdfConstructor);
-        await savePdfFile(doc, 'Hodos-Parent-Summary.pdf');
-        pdfBtn.textContent = 'PDF Saved!';
-        setTimeout(() => { pdfBtn.textContent = originalText; }, 2000);
+        const blob = doc.output('blob');
+        const filename = 'Hodos-Parent-Summary.pdf';
+
+        // Keep only the newest blob URL alive — the fallback card links to it
+        if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
+        lastPdfUrl = URL.createObjectURL(blob);
+
+        triggerDownload(lastPdfUrl, filename);
+        showPdfReadyCard(lastPdfUrl, filename);
       } catch (err) {
-        console.error('Direct PDF export error, falling back to print dialog:', err);
-        pdfBtn.textContent = originalText;
+        console.error('PDF generation failed, falling back to print dialog:', err);
         window.print();
       }
     });
   }
 }
 
-// ─── Direct PDF Download / Mobile Save Helper ─────────────────────────────────
-async function savePdfFile(doc, filename) {
-  const blob = doc.output('blob');
+// ─── Direct PDF download ──────────────────────────────────────────────────────
+let lastPdfUrl = null;
 
-  // If on mobile device with Web Share API supporting files, use native share/save sheet
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-  if (isMobile && navigator.share && navigator.canShare) {
-    try {
-      const file = new File([blob], filename, { type: 'application/pdf' });
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Hodos — Parent Summary',
-          text: 'Options for My University Journey — Summary for Parents'
-        });
-        return;
-      }
-    } catch (shareErr) {
-      if (shareErr.name === 'AbortError') return; // User cancelled share modal
-      console.warn('Native mobile share failed, falling back to direct download:', shareErr);
-    }
-  }
-
-  // Standard synchronous DOM-attached anchor download for desktop and mobile browsers
-  const url = URL.createObjectURL(blob);
+function triggerDownload(url, filename) {
   const a = document.createElement('a');
-  a.style.display = 'none';
   a.href = url;
   a.download = filename;
+  a.style.display = 'none';
   document.body.appendChild(a);
-
-  // Trigger click synchronously within the user gesture context
   a.click();
+  setTimeout(() => a.remove(), 1000);
+}
 
-  // Allow browser time to register download before releasing blob URL
-  setTimeout(() => {
-    try {
-      if (document.body.contains(a)) {
-        document.body.removeChild(a);
-      }
-      URL.revokeObjectURL(url);
-    } catch (_) {}
-  }, 2000);
+function showPdfReadyCard(url, filename) {
+  const toolbar = document.querySelector('.parent-toolbar');
+  if (!toolbar) return;
+
+  let card = document.getElementById('pdf-download-card');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'pdf-download-card';
+    card.className = 'pdf-download-card';
+    card.setAttribute('role', 'status');
+    toolbar.insertAdjacentElement('afterend', card);
+  }
+
+  card.innerHTML = `
+    <p class="pdf-download-card__msg">Your PDF download should start automatically. If it didn't, use a button below.</p>
+    <div class="pdf-download-card__actions">
+      <a class="btn-secondary pdf-download-card__link" href="${url}" download="${filename}">Save PDF</a>
+      <a class="btn-secondary pdf-download-card__link" href="${url}" target="_blank" rel="noopener">Open PDF</a>
+    </div>`;
 }
 
 // ─── PDF Generation (Parent Mode) ─────────────────────────────────────────────

@@ -635,6 +635,47 @@ body {
   outline-offset: 2px;
 }
 
+/* ─── PDF download card ──────────────────────────────────────────────────────── */
+.pdf-download-card {
+  margin-top: 14px;
+  padding: 16px;
+  background: #F0F7F4;
+  border: 1px solid #C3DDD2;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.pdf-download-card__msg {
+  font-size: 0.88rem;
+  color: var(--color-brand);
+  font-weight: 500;
+  margin: 0;
+}
+
+.pdf-download-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pdf-download-card__link {
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ─── Start-over confirm ─────────────────────────────────────────────────────── */
 .startover-confirm {
   display: flex;

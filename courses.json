@@ -1,26 +1,641 @@
 {
-  "questions": [],
+  "questions": [
+    {
+      "id": "subjects",
+      "text": "What are your strongest subjects?",
+      "helper": "Pick up to 3",
+      "max": 3,
+      "options": [
+        { "key": "english",        "label": "English Language" },
+        { "key": "maths",          "label": "Mathematics" },
+        { "key": "physics",        "label": "Physics" },
+        { "key": "chemistry",      "label": "Chemistry" },
+        { "key": "biology",        "label": "Biology" },
+        { "key": "economics",      "label": "Economics" },
+        { "key": "government",     "label": "Government" },
+        { "key": "literature",     "label": "Literature in English" },
+        { "key": "commerce",       "label": "Commerce / Accounting" },
+        { "key": "agric_science",  "label": "Agricultural Science" },
+        { "key": "crs_irs",        "label": "CRS / IRS" },
+        { "key": "geography",      "label": "Geography" }
+      ]
+    },
+    {
+      "id": "interests",
+      "text": "What do you enjoy doing?",
+      "helper": "Pick up to 3",
+      "max": 3,
+      "options": [
+        { "key": "problems",        "label": "Solving problems and puzzles" },
+        { "key": "building",        "label": "Building or fixing things" },
+        { "key": "caring",          "label": "Helping and caring for people" },
+        { "key": "body-health",     "label": "Understanding the human body and health" },
+        { "key": "money-business",  "label": "Numbers, money and business" },
+        { "key": "writing-speaking","label": "Writing, speaking and storytelling" },
+        { "key": "justice-debate",  "label": "Debating, justice and fairness" },
+        { "key": "technology",      "label": "Technology and computers" },
+        { "key": "nature-food",     "label": "Nature, farming and food" },
+        { "key": "human-behavior",  "label": "Understanding why people think and behave the way they do" },
+        { "key": "data-patterns",   "label": "Finding patterns in data" },
+        { "key": "creating",        "label": "Creating things (design, video, music)" }
+      ]
+    },
+    {
+      "id": "workSetting",
+      "text": "Where can you picture yourself working?",
+      "helper": "Pick up to 2",
+      "max": 2,
+      "options": [
+        { "key": "hospital",           "label": "Hospital or clinic" },
+        { "key": "office-bank",        "label": "Office or bank" },
+        { "key": "court-government",   "label": "Courtroom or government" },
+        { "key": "lab",                "label": "Laboratory" },
+        { "key": "outdoors-field",     "label": "Outdoors, farms or field sites" },
+        { "key": "media",              "label": "Studio, newsroom or media house" },
+        { "key": "workshop-site",      "label": "Workshop, plant or construction site" },
+        { "key": "remote-computer",    "label": "From anywhere, remotely, on a computer" },
+        { "key": "classroom-research", "label": "Classroom or research institution" },
+        { "key": "own-business",       "label": "Running my own business" }
+      ]
+    },
+    {
+      "id": "limits",
+      "text": "Is anything limiting your choice?",
+      "helper": "Pick all that apply",
+      "options": [
+        { "key": "cost",            "label": "Money is tight, so I need to plan around cost" },
+        { "key": "close_to_home",   "label": "I need to study close to home" },
+        { "key": "shorter",         "label": "I would prefer a shorter programme" },
+        { "key": "earn_sooner",     "label": "I need to start earning sooner" },
+        { "key": "family_expects",  "label": "My family expects a specific course" },
+        { "key": "abroad",          "label": "I am hoping to study or work abroad later" },
+        { "key": "scholarship",     "label": "I will need a scholarship or financial aid" },
+        { "key": "balance",         "label": "I want enough personal time and balance" },
+        { "key": "no_limits",       "label": "No major limits" }
+      ]
+    },
+    {
+      "id": "worry",
+      "text": "In one sentence, what worries you most about this choice?",
+      "helper": "Optional — 140 characters. Tap \"Get my brief\" or \"Skip\" when you're ready.",
+      "type": "text",
+      "max": 140
+    }
+  ],
   "courses": [
     {
       "id": "medicine",
       "name": "Medicine",
       "tiebreakOrder": 1,
-      "subjectKeys":  [],
-      "interestKeys": [],
-      "workKeys":     [],
-      "jambRequired": []
+      "subjectKeys":  ["biology", "chemistry", "physics"],
+      "interestKeys": ["caring", "body-health", "problems"],
+      "workKeys":     ["hospital", "classroom-research"],
+      "jambRequired": ["english", "biology", "chemistry", "physics"],
+      "card": {
+        "rationale":      "Matches students who are strong in biology, chemistry, or physics and who want to care for people and understand the human body.",
+        "whatYouStudy":   "Human body sciences in the early years, then clinical training in hospitals. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Medicine opens paths in clinical practice, public health, and research in Nigeria and abroad. Entry is highly competitive.",
+        "skillsToStack":  ["Communication and patient empathy", "Research and evidence appraisal", "Resilience and stress management"],
+        "honestRisks":    "Very competitive entry. Long training path. Choosing Medicine only for prestige rather than genuine interest in people and science is a common regret.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Nursing", "Pharmacy"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study for such a long, demanding course, and what do students struggle with most?",
+          "What part of the degree surprised you most when you got there?",
+          "What would you tell a student deciding between Medicine and a related health science?"
+        ],
+        "limitNotes": {
+          "cost":          "Medicine is one of the more expensive Nigerian degree programmes. Research scholarship routes and federal vs state university fee differences early. [VERIFY current fee ranges]",
+          "close_to_home": "Not all states have accredited medical schools. Check MDCN-accredited programmes near you. [VERIFY current list]",
+          "shorter":       "Medicine is typically a 6-year programme in Nigeria. [VERIFY] There is no standard shortened route.",
+          "earn_sooner":   "Expect 6 years of study plus housemanship before independent practice. [VERIFY current housemanship requirements]",
+          "abroad":        "Nigerian medical degrees can open doors abroad, but licensing exams (PLAB, USMLE) are required. [VERIFY current requirements]",
+          "scholarship":   "Check JAMB, state governments, and university bursary offices for medical scholarship opportunities. [VERIFY available schemes]",
+          "balance":       "Medical school is intense — early years are heavy on reading and lab work; clinical years add shift work. Realistic time management is essential."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their subject strengths and interest in health and caring for people are a strong match for Medicine.",
+        "careerBrief":    "Medicine leads to clinical practice, public health, or research. It is highly competitive and requires a long training path, but remains one of the most respected and in-demand careers in Nigeria. [VERIFY]",
+        "skillsBrief":    "Communication, research skills, and resilience — useful far beyond medicine."
+      }
+    },
+    {
+      "id": "nursing",
+      "name": "Nursing",
+      "tiebreakOrder": 2,
+      "subjectKeys":  ["biology", "chemistry", "physics"],
+      "interestKeys": ["caring", "body-health"],
+      "workKeys":     ["hospital"],
+      "jambRequired": ["english", "biology", "chemistry", "physics"],
+      "card": {
+        "rationale":      "Matches students who enjoy hands-on care, teamwork, and understanding the human body.",
+        "whatYouStudy":   "Nursing science, human body sciences, and supervised clinical practice in hospitals. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Nursing is in high demand in Nigeria and internationally. Registered nurses can specialise and advance into leadership and education roles.",
+        "skillsToStack":  ["Specialty clinical certifications", "Data literacy and health records", "Leadership and ward management"],
+        "honestRisks":    "Heavy workload and emotional demands. Working conditions vary significantly between hospitals. It is a regulated profession requiring NMCN registration. [VERIFY current registration steps]",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Pharmacy", "Radiography"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you balance studying with practical clinical work, and what do students struggle with?",
+          "What specialisations are most in demand in Nigeria right now?",
+          "What does an average first year after graduation look like?"
+        ],
+        "limitNotes": {
+          "cost":          "Nursing programmes are available at federal and state universities at varying fee levels. [VERIFY current options]",
+          "close_to_home": "Nursing is offered at many institutions across Nigeria. Check NUC-accredited schools in your state. [VERIFY]",
+          "shorter":       "Nursing is typically a 5-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "After 5 years and NMCN registration, employment opportunities are generally good in Nigeria and abroad. [VERIFY]",
+          "abroad":        "Nigerian nursing qualifications can open routes abroad with additional licensing. [VERIFY country-specific requirements]",
+          "scholarship":   "Check NMCN, federal and state government bursaries, and hospital sponsorship schemes. [VERIFY]",
+          "balance":       "Clinical placements add to lecture time. Expect a demanding but structured schedule."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their caring nature and interest in health sciences make Nursing a strong practical fit.",
+        "careerBrief":    "Nursing is in high demand locally and internationally. It offers clear career progression and international mobility. [VERIFY]",
+        "skillsBrief":    "Clinical care, health data literacy, and leadership — skills that transfer across health settings."
+      }
+    },
+    {
+      "id": "pharmacy",
+      "name": "Pharmacy",
+      "tiebreakOrder": 3,
+      "subjectKeys":  ["chemistry", "biology", "physics"],
+      "interestKeys": ["body-health", "problems"],
+      "workKeys":     ["hospital", "lab", "office-bank"],
+      "jambRequired": ["english", "biology", "chemistry", "physics"],
+      "card": {
+        "rationale":      "Matches students with strong chemistry and biology who enjoy precision and problem-solving in a health context.",
+        "whatYouStudy":   "The chemistry of medicines, how drugs work in the body, and pharmacy practice. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Pharmacists work in hospitals, community pharmacies, the pharmaceutical industry, and regulatory bodies. Paths vary.",
+        "skillsToStack":  ["Business and regulatory knowledge", "Pharmaceutical research skills", "Entrepreneurship for community pharmacy ownership"],
+        "honestRisks":    "A regulated profession — PCN registration is required after graduation. [VERIFY current PCN steps] Paths into the industry vs community vs hospital pharmacy each have different entry requirements.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Nursing", "Radiography"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study chemistry-heavy material effectively, and what catches students out?",
+          "Which career path — hospital, community, or industry — do you think is most promising right now?",
+          "What would you do differently in your first year if you could start again?"
+        ],
+        "limitNotes": {
+          "cost":          "Pharmacy programmes vary in fees across institutions. [VERIFY current ranges]",
+          "close_to_home": "Available at several Nigerian universities. Check PCN-accredited programmes near you. [VERIFY]",
+          "shorter":       "Pharmacy is typically a 5-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "PCN registration is required before independent practice. [VERIFY current timeline after graduation]",
+          "abroad":        "Nigerian pharmacy degrees can open routes abroad with additional licensing exams. [VERIFY]",
+          "scholarship":   "Check PCN, university bursaries, and pharmaceutical industry scholarship schemes. [VERIFY]",
+          "balance":       "Chemistry-heavy coursework requires consistent study. Industrial attachments add practical time."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their chemistry and science strengths, combined with interest in health and precision, align well with Pharmacy.",
+        "careerBrief":    "Pharmacists work in hospitals, community practice, and industry. It is a regulated profession with clear career paths locally and internationally. [VERIFY]",
+        "skillsBrief":    "Scientific rigour, business acumen, and regulatory knowledge."
+      }
     },
     {
       "id": "law",
       "name": "Law",
-      "tiebreakOrder": 2,
-      "subjectKeys":  [],
-      "interestKeys": [],
-      "workKeys":     [],
-      "jambRequired": []
+      "tiebreakOrder": 4,
+      "subjectKeys":  ["english", "literature", "government", "economics", "crs_irs"],
+      "interestKeys": ["justice-debate", "writing-speaking"],
+      "workKeys":     ["court-government", "office-bank"],
+      "jambRequired": ["english", "literature", "government"],
+      "card": {
+        "rationale":      "Matches students who enjoy reading, argument, and writing and who picture themselves in legal or governmental settings.",
+        "whatYouStudy":   "Legal principles, constitutional and contract law, legal writing, and argument. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Law graduates in Nigeria can go into legal practice (calling to bar via NLS is required), corporate law, government, and policy. The field is competitive — skills, writing quality, and network matter.",
+        "skillsToStack":  ["Advanced writing and persuasive communication", "Public speaking", "Technology and contract drafting skills"],
+        "honestRisks":    "Extra professional training after the degree (Nigerian Law School, call to bar) is required before practice. [VERIFY current NLS process] The field is crowded; differentiation takes deliberate effort.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Mass Communication", "Economics"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study and remember large volumes of reading, and where do students struggle most?",
+          "What does the Nigerian Law School and call-to-bar process actually look like in practice?",
+          "Which area of law do you think offers the most opportunity for someone starting out today?"
+        ],
+        "limitNotes": {
+          "cost":          "Law has additional costs after the degree — Nigerian Law School fees should be factored in. [VERIFY current NLS fees]",
+          "close_to_home": "Law is offered at many Nigerian universities. Check NUC-accredited faculties near you. [VERIFY]",
+          "shorter":       "Law is typically a 5-year programme plus Nigerian Law School. [VERIFY]",
+          "earn_sooner":   "You cannot practise as a lawyer without completing the Nigerian Law School. [VERIFY current timeline]",
+          "abroad":        "Nigerian law qualifications generally require conversion qualifications to practise abroad. [VERIFY by country]",
+          "scholarship":   "Check NUC, university bursaries, and bar association scholarship schemes. [VERIFY]",
+          "balance":       "Law involves heavy reading loads, especially in years 2–4. Time management is critical."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their love of debate, writing, and fairness maps directly onto what Law requires and rewards.",
+        "careerBrief":    "Law opens doors in legal practice, government, corporate roles, and policy. Completing the Nigerian Law School is required for practice. [VERIFY]",
+        "skillsBrief":    "Writing, argumentation, and analytical thinking — transferable to many fields."
+      }
+    },
+    {
+      "id": "computer_science",
+      "name": "Computer Science",
+      "tiebreakOrder": 5,
+      "subjectKeys":  ["maths", "physics", "economics"],
+      "interestKeys": ["technology", "problems", "building"],
+      "workKeys":     ["remote-computer", "office-bank", "own-business"],
+      "jambRequired": ["english", "maths", "physics"],
+      "card": {
+        "rationale":      "Matches students who enjoy building, problem-solving, and technology, with strong maths or physics.",
+        "whatYouStudy":   "Programming, computer systems, algorithms, and mathematics for computing. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Software development, data work, and technology roles are growing in Nigeria. Remote work opportunities are available. Entry-level roles are changing quickly with AI.",
+        "skillsToStack":  ["Portfolio of real projects (GitHub)", "Communication and writing skills", "Cloud and DevOps basics"],
+        "honestRisks":    "A degree alone is not enough — employers look at what you have actually built. Entry-level roles are shifting fast with AI. Staying current requires continuous self-directed learning.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Statistics", "Electrical Engineering"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study this course effectively, and how do you practise beyond lectures?",
+          "What kind of portfolio or projects do employers actually look for in Nigeria?",
+          "How has AI changed what a Computer Science graduate needs to know?"
+        ],
+        "limitNotes": {
+          "cost":          "Computer Science is available at federal and state universities at varying fees. [VERIFY]",
+          "close_to_home": "Widely offered across Nigeria. Check NUC-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Freelance and part-time work is possible during study if you build skills early. [VERIFY typical timelines]",
+          "abroad":        "Tech skills are internationally portable. Many Nigerian CS graduates work remotely for international companies. [VERIFY current landscape]",
+          "scholarship":   "Check tech company internship sponsorships, government IT scholarships, and university bursaries. [VERIFY]",
+          "balance":       "Workload varies by institution and year. Project-heavy later years require strong time management."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their problem-solving drive and interest in building things make Computer Science a natural fit.",
+        "careerBrief":    "Computer Science opens paths in software development, data work, and technology roles locally and internationally. [VERIFY]",
+        "skillsBrief":    "Programming, analytical thinking, and the ability to build real products."
+      }
+    },
+    {
+      "id": "electrical_engineering",
+      "name": "Electrical Engineering",
+      "tiebreakOrder": 6,
+      "subjectKeys":  ["maths", "physics", "chemistry"],
+      "interestKeys": ["building", "problems", "technology"],
+      "workKeys":     ["workshop-site", "lab", "office-bank"],
+      "jambRequired": ["english", "maths", "physics", "chemistry"],
+      "card": {
+        "rationale":      "Matches students who like maths, physics, and systems, and who enjoy building and fixing things.",
+        "whatYouStudy":   "Circuits, power systems, electronics, and engineering mathematics. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Electrical engineers work in power, telecoms, manufacturing, and technology sectors. Opportunities depend on the sector and economy.",
+        "skillsToStack":  ["Programming (Python, MATLAB)", "Project management", "COREN registration pathway knowledge"],
+        "honestRisks":    "Demanding workload. Professional registration with COREN is expected for senior roles. [VERIFY current COREN process] Opportunities vary significantly by sector.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Computer Science", "Statistics"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study heavy maths and physics, and what do students find hardest?",
+          "Which sectors are hiring electrical engineers most actively in Nigeria right now?",
+          "What would you recommend a first-year student focus on to stand out?"
+        ],
+        "limitNotes": {
+          "cost":          "Engineering programmes can have higher lab and materials costs. [VERIFY current ranges]",
+          "close_to_home": "Available at several Nigerian universities. Check COREN-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 5-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Industrial training (IT) year is common and can provide income experience. [VERIFY current IT requirements]",
+          "abroad":        "Nigerian engineering degrees may require conversion or additional exams for practice abroad. [VERIFY by country]",
+          "scholarship":   "Check COREN, engineering companies, and government scholarship schemes. [VERIFY]",
+          "balance":       "Maths and lab work are demanding. Good time management is essential from year one."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their strength in maths and physics, and passion for building things, point strongly toward Electrical Engineering.",
+        "careerBrief":    "Electrical engineers work across power, telecoms, and technology. It is a respected profession with COREN registration for senior roles. [VERIFY]",
+        "skillsBrief":    "Analytical and systems thinking, programming fundamentals, and project management."
+      }
+    },
+    {
+      "id": "accounting",
+      "name": "Accounting",
+      "tiebreakOrder": 7,
+      "subjectKeys":  ["maths", "economics", "commerce"],
+      "interestKeys": ["money-business", "data-patterns"],
+      "workKeys":     ["office-bank", "own-business"],
+      "jambRequired": ["english", "maths", "economics"],
+      "card": {
+        "rationale":      "Matches students who like structure, accuracy, and numbers, with strengths in maths and economics.",
+        "whatYouStudy":   "Financial reporting, auditing, taxation, and management accounting. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Accounting graduates can work in audit firms, corporations, government, and as entrepreneurs. Professional certification (ICAN or ACCA) is usually expected.",
+        "skillsToStack":  ["Data analysis and spreadsheet tools", "Finance and accounting software", "ICAN or ACCA professional certification pathway"],
+        "honestRisks":    "Professional certification beyond the degree is usually required for career advancement. Some routine accounting tasks are being automated — applied and advisory skills matter more.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Economics", "Statistics"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study for this course and any professional exams, and what do students struggle with?",
+          "When should a student start preparing for ICAN or ACCA, and how do you balance that with the degree?",
+          "Which accounting specialisation do you think has the most opportunity right now?"
+        ],
+        "limitNotes": {
+          "cost":          "ICAN or ACCA examination fees are an additional cost beyond the degree. Plan for this. [VERIFY current fee schedules]",
+          "close_to_home": "Accounting is widely offered across Nigeria. Check NUC-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Entry-level accounting roles are available before professional certification. [VERIFY typical timelines]",
+          "abroad":        "ACCA qualification is internationally recognised. ICAN may require conversion. [VERIFY by country]",
+          "scholarship":   "Check ICAN, ACCA, and corporate sponsorship schemes. [VERIFY]",
+          "balance":       "Accounting requires consistent study but is generally more predictable in workload than science programmes."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their love of numbers and structure makes Accounting a natural and practical fit.",
+        "careerBrief":    "Accounting leads to roles in audit, corporate finance, government, and entrepreneurship. Professional certification (ICAN/ACCA) is typically needed for advancement. [VERIFY]",
+        "skillsBrief":    "Financial analysis, data tools, and structured thinking."
+      }
+    },
+    {
+      "id": "economics",
+      "name": "Economics",
+      "tiebreakOrder": 8,
+      "subjectKeys":  ["economics", "maths", "government", "geography", "commerce"],
+      "interestKeys": ["money-business", "data-patterns", "problems"],
+      "workKeys":     ["office-bank", "court-government", "classroom-research"],
+      "jambRequired": ["english", "maths", "economics"],
+      "card": {
+        "rationale":      "Matches students who enjoy analysis, big-picture questions, and finding patterns in data.",
+        "whatYouStudy":   "Microeconomics, macroeconomics, statistics, and policy analysis. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Economics graduates work in banking, government, policy, international organisations, and research. The degree is versatile but can be generic without applied skills.",
+        "skillsToStack":  ["Statistics and econometrics", "Data tools (Excel, R, Stata, or Python)", "Strong analytical writing"],
+        "honestRisks":    "Economics can feel abstract without applied work. Without additional data or analytical skills, graduates can struggle to stand out. The degree is strong combined with a specialisation.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Accounting", "Statistics"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study maths and theory together, and what do students usually struggle with?",
+          "Which applied skills made the biggest difference in your career after graduation?",
+          "What would you tell a student who wants to go into policy or government after an Economics degree?"
+        ],
+        "limitNotes": {
+          "cost":          "Generally affordable across Nigerian universities. [VERIFY current fee ranges]",
+          "close_to_home": "Widely offered. Check NUC-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Graduate roles in banking and finance are available soon after graduation. [VERIFY typical timelines]",
+          "abroad":        "Economics is well recognised internationally, especially with strong quantitative skills. [VERIFY]",
+          "scholarship":   "Check CBN, finance sector, and government scholarship schemes. [VERIFY]",
+          "balance":       "Economics has a reasonable workload by Nigerian university standards, but maths-heavy options require consistent effort."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their analytical mind and interest in how money and systems work make Economics a versatile and relevant choice.",
+        "careerBrief":    "Economics graduates work in banking, government, policy, and research. The degree is broad and opens many doors with the right applied skills. [VERIFY]",
+        "skillsBrief":    "Quantitative analysis, policy thinking, and structured writing."
+      }
+    },
+    {
+      "id": "mass_communication",
+      "name": "Mass Communication",
+      "tiebreakOrder": 9,
+      "subjectKeys":  ["english", "literature", "government", "economics"],
+      "interestKeys": ["writing-speaking", "creating", "human-behavior"],
+      "workKeys":     ["media", "own-business", "remote-computer"],
+      "jambRequired": ["english", "literature"],
+      "card": {
+        "rationale":      "Matches students who are creative, curious about people, and enjoy writing, speaking, and storytelling.",
+        "whatYouStudy":   "Journalism, media writing, broadcasting, and public relations. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Graduates work in journalism, PR, advertising, broadcasting, content creation, and digital media. Income can be unstable early; portfolio matters more than certificate.",
+        "skillsToStack":  ["Video production and editing", "Writing and content strategy", "Social media and digital marketing skills"],
+        "honestRisks":    "Income can be unstable, especially in journalism. Portfolio and real-world work experience matter more than the certificate in many creative roles.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Law", "Psychology"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study and build practical skills at the same time, and what do students struggle with?",
+          "What kind of portfolio gets noticed by employers or clients in Nigeria's media market?",
+          "How has digital and social media changed what a Mass Communication graduate needs to be able to do?"
+        ],
+        "limitNotes": {
+          "cost":          "Generally one of the more affordable Nigerian degree programmes. [VERIFY current fee ranges]",
+          "close_to_home": "Widely available across Nigeria. Check NUC-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Freelance writing and content work can start during studies. [VERIFY]",
+          "abroad":        "Media and communications skills are internationally transferable, especially with a digital portfolio. [VERIFY]",
+          "scholarship":   "Check NUJ, broadcasting organisations, and university bursaries. [VERIFY]",
+          "balance":       "Project and production work can be time-intensive, but the schedule is often more flexible than science programmes."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their creativity and love of communication and storytelling make Mass Communication a strong natural fit.",
+        "careerBrief":    "Mass Communication graduates go into journalism, PR, broadcasting, and digital media. Portfolio and practical skills are what employers look for. [VERIFY]",
+        "skillsBrief":    "Storytelling, content creation, and digital communication skills."
+      }
+    },
+    {
+      "id": "statistics",
+      "name": "Statistics",
+      "tiebreakOrder": 10,
+      "subjectKeys":  ["maths", "physics", "economics", "chemistry"],
+      "interestKeys": ["data-patterns", "problems", "technology"],
+      "workKeys":     ["remote-computer", "office-bank", "classroom-research"],
+      "jambRequired": ["english", "maths"],
+      "card": {
+        "rationale":      "Matches students who love maths and finding patterns in data, with an eye for technology.",
+        "whatYouStudy":   "Probability, statistical methods, data analysis, and mathematics. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Statistics graduates are in demand in health research, finance, technology, and government. The course is less well-known but increasingly valuable.",
+        "skillsToStack":  ["Programming (R, Python, or SQL)", "Domain knowledge in a field (health, finance, agriculture)", "Data visualisation"],
+        "honestRisks":    "Statistics is maths-heavy and can feel abstract early. It is less well-known than Economics or Computer Science, which can affect initial employer recognition — but the skills are genuinely in demand.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Economics", "Computer Science"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study maths-heavy material effectively, and what do students find hardest?",
+          "Which industries in Nigeria are most actively looking for Statistics graduates right now?",
+          "What programming language or tool would you recommend a Statistics student learn first?"
+        ],
+        "limitNotes": {
+          "cost":          "Generally affordable across Nigerian universities. [VERIFY current fee ranges]",
+          "close_to_home": "Available at several universities but not as widely as Economics. Check NUC-accredited programmes. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Data and analytics roles are growing and can be entered relatively quickly with the right skills. [VERIFY typical timelines]",
+          "abroad":        "Quantitative skills are internationally portable, especially with programming proficiency. [VERIFY]",
+          "scholarship":   "Check NBS (National Bureau of Statistics), research institutions, and university bursaries. [VERIFY]",
+          "balance":       "Maths-heavy but generally more flexible in schedule than engineering or health sciences."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their love of numbers and patterns makes Statistics a quietly powerful and increasingly in-demand choice.",
+        "careerBrief":    "Statistics graduates work in health research, finance, technology, and government data roles. Demand is growing significantly. [VERIFY]",
+        "skillsBrief":    "Data analysis, programming, and quantitative problem-solving."
+      }
+    },
+    {
+      "id": "agricultural_economics",
+      "name": "Agricultural Economics",
+      "tiebreakOrder": 11,
+      "subjectKeys":  ["maths", "agric_science", "biology", "economics", "chemistry"],
+      "interestKeys": ["nature-food", "money-business", "data-patterns"],
+      "workKeys":     ["outdoors-field", "own-business", "office-bank"],
+      "jambRequired": ["english", "maths", "agric_science"],
+      "card": {
+        "rationale":      "Matches students interested in business, food systems, and policy, who can see themselves working in agriculture or agribusiness.",
+        "whatYouStudy":   "Farm management, agribusiness, agricultural policy, and economics. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Graduates work in agribusiness, agricultural finance, food supply chains, policy, and extension services. Nigeria's agriculture sector is large and evolving.",
+        "skillsToStack":  ["Agribusiness planning and management", "Supply chain and logistics knowledge", "Data analysis tools"],
+        "honestRisks":    "The course can carry an unfair prestige perception in some circles — the reality is that agribusiness and food systems are major economic sectors. Fieldwork is part of the programme; verify whether this suits you.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Economics", "Accounting"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study both the farming and the business sides, and where do students struggle most?",
+          "What opportunities in Nigerian agriculture or agribusiness are you most excited about right now?",
+          "What would you tell a student who is interested but worried about the course's reputation?"
+        ],
+        "limitNotes": {
+          "cost":          "Generally one of the more affordable options. Agricultural universities often have additional farm-related activities. [VERIFY current fee ranges]",
+          "close_to_home": "Available at federal and state agricultural universities and some general universities. [VERIFY NUC-accredited programmes near you]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "Agribusiness entrepreneurship can begin during or after study. [VERIFY typical graduate timelines]",
+          "abroad":        "Agricultural economics skills are valued internationally, especially in food security and development organisations. [VERIFY]",
+          "scholarship":   "Check FMARD (Federal Ministry of Agriculture), CBN agric schemes, and university bursaries. [VERIFY]",
+          "balance":       "Fieldwork adds to the schedule but is generally well-structured. Not as intensive as health or engineering programmes."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their interest in food, business, and data make Agricultural Economics a practical and forward-looking choice in a sector Nigeria depends on.",
+        "careerBrief":    "Agricultural Economics graduates go into agribusiness, food systems, policy, and finance. Nigeria's agricultural sector is large and offers significant opportunity. [VERIFY]",
+        "skillsBrief":    "Business planning, supply chain thinking, and data analysis."
+      }
+    },
+    {
+      "id": "psychology",
+      "name": "Psychology",
+      "tiebreakOrder": 12,
+      "subjectKeys":  ["english", "biology", "maths", "economics", "government", "literature"],
+      "interestKeys": ["human-behavior", "caring", "writing-speaking"],
+      "workKeys":     ["classroom-research", "hospital", "office-bank"],
+      "jambRequired": ["english"],
+      "card": {
+        "rationale":      "Matches students who are curious about why people think and behave the way they do, and who enjoy writing and caring.",
+        "whatYouStudy":   "Human behaviour, research methods, development, and counselling basics. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Psychology graduates in Nigeria work in counselling, HR, research, education, and health. Clinical practice usually requires further training beyond the bachelor's degree.",
+        "skillsToStack":  ["Research methods and data analysis", "Counselling training or certification", "Data skills and report writing"],
+        "honestRisks":    "Clinical psychology practice typically requires further study and professional registration. Direct bachelor's-level roles are fewer than in some other fields — a plan for what comes after the degree is important.",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Mass Communication", "Nursing"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study theory and research methods, and what do students struggle with?",
+          "What does a realistic career path look like for a Psychology graduate in Nigeria at bachelor's level?",
+          "When should a student start thinking about postgraduate training, and what options are there?"
+        ],
+        "limitNotes": {
+          "cost":          "Generally affordable across Nigerian universities. [VERIFY current fee ranges]",
+          "close_to_home": "Available at several universities. Check NUC-accredited programmes near you. [VERIFY]",
+          "shorter":       "Typically a 4-year programme in Nigeria. [VERIFY]",
+          "earn_sooner":   "HR, education, and research roles are accessible soon after graduation. Clinical roles require more training. [VERIFY]",
+          "abroad":        "Psychology qualifications generally require local licensing to practise clinically abroad. [VERIFY by country]",
+          "scholarship":   "Check NPC (Nigerian Psychological Council) and university bursaries. [VERIFY]",
+          "balance":       "Reading and research-heavy. Generally more manageable in workload than health or engineering programmes."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their genuine curiosity about people and behaviour is exactly what Psychology rewards.",
+        "careerBrief":    "Psychology opens paths in counselling, HR, education, and research. Clinical work requires further training after the degree. [VERIFY]",
+        "skillsBrief":    "Empathy, research skills, and the ability to understand and communicate about human behaviour."
+      }
+    },
+    {
+      "id": "radiography",
+      "name": "Radiography",
+      "tiebreakOrder": 13,
+      "subjectKeys":  ["physics", "chemistry", "biology"],
+      "interestKeys": ["body-health", "technology", "caring", "problems"],
+      "workKeys":     ["hospital", "lab"],
+      "jambRequired": ["english", "physics", "chemistry", "biology"],
+      "card": {
+        "rationale":      "Matches students who like physics and biology together and enjoy working with both machines and people in a health environment.",
+        "whatYouStudy":   "Radiation physics and imaging technology, anatomy and physiology, and clinical radiography and patient care. [VERIFY exact programme structure]",
+        "careerReality":  "[VERIFY] Radiographers are in demand in hospitals and diagnostic centres. RRBN licensing is required after graduation. Fewer universities offer this programme — verify accreditation carefully.",
+        "skillsToStack":  ["Patient communication and care", "Health-technology literacy", "Teamwork in clinical settings"],
+        "honestRisks":    "Heavy science load combining physics and anatomy. A regulated profession — the degree is not enough; RRBN licensing is required. [VERIFY current RRBN steps] Fewer institutions offer it, so verify accreditation. Programme length is 5 years. [VERIFY with RRBN]",
+        "ifNotWorkedOut": {
+          "relatedCourses": ["Nursing", "Pharmacy"],
+          "verifyNote":     "Check current rules for changing courses or re-sitting JAMB with your university and JAMB before deciding."
+        },
+        "mentorQuestions": [
+          "How do you study physics and anatomy effectively, and what do students struggle with?",
+          "What does RRBN licensing look like in practice after graduation?",
+          "Which hospitals or health settings have the best opportunities for radiographers in Nigeria right now?"
+        ],
+        "limitNotes": {
+          "cost":          "Available at a limited number of institutions. Check fees at RRBN-accredited schools. [VERIFY]",
+          "close_to_home": "Fewer universities offer accredited Radiography programmes — check RRBN-accredited institutions near you. [VERIFY]",
+          "shorter":       "Radiography is typically a 5-year programme in Nigeria, per RRBN. [VERIFY]",
+          "earn_sooner":   "RRBN licensing is required before independent practice. [VERIFY current timeline after graduation]",
+          "abroad":        "Radiography qualifications can open routes abroad with additional licensing. [VERIFY country-specific requirements]",
+          "scholarship":   "Check RRBN, hospital sponsorship, and government health sector scholarship schemes. [VERIFY]",
+          "balance":       "Combining physics, anatomy, and clinical hours is demanding. Expect a structured but intensive programme."
+        }
+      },
+      "parentSummary": {
+        "whyOneSentence": "Their strength in physics and biology, and interest in health technology, make Radiography a distinctive and in-demand choice.",
+        "careerBrief":    "Radiographers work in hospitals and diagnostic centres. RRBN registration is required. Demand is growing as healthcare access expands. [VERIFY]",
+        "skillsBrief":    "Health technology, patient care, and physics-informed clinical skills."
+      }
     }
   ],
-  "worryThemes": [],
-  "parentDiscussionStarters": {},
-  "nextStepsChecklist": []
+
+  "worryThemes": [
+    {
+      "key": "family",
+      "triggers": ["parent", "family", "mum", "dad", "expect", "pressure", "force", "forced", "disappoint"],
+      "reassurance": "Family opinions come from love, not always knowledge. Hodos is designed to help you have that conversation — the Parent Mode summary gives your family the same honest picture you have. Many students who talked it through with their parents found their family was more open than expected once they had real information to discuss."
+    },
+    {
+      "key": "money",
+      "triggers": ["cost", "afford", "fee", "fees", "expensive", "scholarship", "poor", "money", "fund", "funds", "pay"],
+      "reassurance": "Cost is a real factor, not a reason to avoid your best fit. The limit notes in your brief flag specific financial planning steps for each course — check them. Scholarships, federal vs state university fees, and part-time income during study are all worth researching before ruling anything out."
+    },
+    {
+      "key": "wrong_choice",
+      "triggers": ["wrong", "regret", "mistake", "change", "unsure", "decide", "decision", "certain", "sure", "doubt", "confused"],
+      "reassurance": "Uncertainty at this stage is completely normal — it is a sign you are taking the decision seriously. No tool removes all doubt, and Hodos is not a verdict. Use this brief as a starting point: talk to people actually working in the fields that interest you, and treat the 'questions for a professional' section of each card as a real to-do."
+    },
+    {
+      "key": "jobs",
+      "triggers": ["job", "work", "unemploy", "unemployment", "salary", "earn", "earning", "market", "employ", "career", "graduate", "future"],
+      "reassurance": "Nigerian graduate employment varies significantly by field and by the skills you bring. The brief includes a Nigerian career reality section for each course — it gives you an honest picture of local entry points without invented statistics. The skills-to-stack section points at what actually differentiates graduates in each field."
+    },
+    {
+      "key": "capability",
+      "triggers": ["smart", "good enough", "hard", "struggle", "fail", "cope", "capable", "ability", "intelligent", "brilliant", "tough", "difficult"],
+      "reassurance": "Most students who succeed in demanding courses were not certain they could at the start. The honest risks section of each course card tells you what actually trips students up — forewarned is forearmed. Talk to someone in the field and ask them directly: 'What kind of student does well here?' Their answer will tell you more than any ranking."
+    }
+  ],
+
+  "parentDiscussionStarters": {
+    "cost":          "Have you and your child talked through how the programme will be funded — including professional exam fees and living costs? It would be worth researching scholarship and bursary options together.",
+    "close_to_home": "Your child has indicated they would prefer to study close to home. Would you like to look together at which accredited institutions offering their top choices are nearby?",
+    "shorter":       "Your child has flagged a preference for a shorter programme. The notes in each course card include programme length — it may be worth discussing together which length feels right given your family's situation.",
+    "earn_sooner":   "Your child has noted they want to start earning relatively soon after graduation. The career reality notes for each course give an honest picture of typical time-to-employment — a useful starting point for that conversation.",
+    "family_expects": "Your child has noted that family expectations are a factor. This summary is not a verdict — it is the starting point for an open conversation. The courses here are the ones that fit your child's actual strengths and interests, framed honestly for you to discuss together.",
+    "abroad":        "Your child is interested in studying or working abroad in the future. The notes in each course card flag international portability — it may be worth discussing what that path realistically looks like.",
+    "scholarship":   "Your child has noted they will need a scholarship or financial aid. Each course card includes a note on scholarship routes — researching these together early would be a good next step.",
+    "balance":       "Your child has flagged the importance of personal time and balance. The honest risks section for each course card includes a realistic note on workload — worth discussing openly."
+  },
+
+  "nextStepsChecklist": [
+    "Confirm your JAMB subject combination with an official source (jamb.gov.ng).",
+    "Speak to at least one person currently working in each field you are considering.",
+    "Check programme duration and entry requirements at your target universities.",
+    "Research available scholarships and bursaries if cost is a factor.",
+    "Visit an open day or faculty event before making a final decision."
+  ]
 }

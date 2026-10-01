@@ -512,7 +512,7 @@ function renderParentsTab() {
       <button class="btn-secondary" id="copy-btn" aria-label="Copy parent summary text">
         Copy text
       </button>
-      <button class="btn-secondary" id="print-btn" aria-label="Save as PDF">
+      <button class="btn-secondary" id="pdf-btn" aria-label="Save as PDF">
         Save as PDF
       </button>
     </div>`;
@@ -548,16 +548,261 @@ function attachParentActions() {
     });
   }
 
-  // Print button
-  const printBtn = document.getElementById('print-btn');
-  if (printBtn) {
-    printBtn.addEventListener('click', () => {
-      // Ensure Parent Mode tab is active before printing
-      const parentsBtn = document.getElementById('tab-parents-btn');
-      if (parentsBtn) parentsBtn.click();
-      setTimeout(() => window.print(), 100);
+  // Save as PDF button (direct download without printer dialog)
+  const pdfBtn = document.getElementById('pdf-btn') || document.getElementById('print-btn');
+  if (pdfBtn) {
+    pdfBtn.addEventListener('click', () => {
+      const originalText = pdfBtn.textContent;
+      pdfBtn.textContent = 'Saving PDF…';
+      try {
+        const jsPdfConstructor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+        if (!jsPdfConstructor) {
+          throw new Error('jsPDF library not loaded');
+        }
+        const doc = generateParentSummaryPDF(jsPdfConstructor);
+        doc.save('Hodos-Parent-Summary.pdf');
+        pdfBtn.textContent = 'PDF Saved!';
+        setTimeout(() => { pdfBtn.textContent = originalText; }, 2000);
+      } catch (err) {
+        console.error('Direct PDF export error, falling back to print dialog:', err);
+        pdfBtn.textContent = originalText;
+        window.print();
+      }
     });
   }
+}
+
+// ─── PDF Generation (Parent Mode) ─────────────────────────────────────────────
+function sanitizePdfText(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\[VERIFY\]/g, '(confirm with official sources)')
+    .replace(/\bVERIFY\b/g, '(confirm with official sources)')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/…/g, '...');
+}
+
+function generateParentSummaryPDF(jsPDFConstructor) {
+  const doc = new jsPDFConstructor({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const pageWidth = 210;
+  const pageHeight = 297;
+  const marginX = 18;
+  const contentWidth = pageWidth - (marginX * 2);
+  const bottomMargin = 20;
+  const topMargin = 18;
+
+  let y = topMargin;
+
+  function ensureSpace(needed) {
+    if (y + needed > pageHeight - bottomMargin) {
+      doc.addPage();
+      y = topMargin;
+      return true;
+    }
+    return false;
+  }
+
+  // Header: Brand & Tagline
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(28, 68, 54); // Deep brand green (#1C4436)
+  doc.text('Hodos', marginX, y);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(92, 91, 86);
+  doc.text('Hodos · The Path · Choose your path well', marginX + 30, y - 1);
+  y += 7;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12.5);
+  doc.setTextColor(28, 68, 54);
+  doc.text('Options for My University Journey — Summary for Parents', marginX, y);
+  y += 5.5;
+
+  // Thin separator line
+  doc.setDrawColor(28, 68, 54);
+  doc.setLineWidth(0.5);
+  doc.line(marginX, y, marginX + contentWidth, y);
+  y += 6.5;
+
+  // Salutation
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(92, 91, 86);
+  const salutationText = 'A summary prepared by your child to share their university course ideas with you.';
+  const salLines = doc.splitTextToSize(salutationText, contentWidth);
+  doc.text(salLines, marginX, y);
+  y += (salLines.length * 4.2) + 3;
+
+  // Family expectations note if selected
+  const hasFamilyExpects = (answers[3] || []).includes('family_expects');
+  if (hasFamilyExpects) {
+    const fnText = 'Your child has noted that family expectations are a factor in this decision. The courses below are the ones that match their actual strengths and interests. This summary is a starting point for an open conversation — not a verdict. The family conversation, not this app, makes the final decision.';
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    const fnLines = doc.splitTextToSize(fnText, contentWidth - 10);
+    const boxHeight = (fnLines.length * 4) + 7;
+
+    ensureSpace(boxHeight + 4);
+    doc.setFillColor(240, 247, 244); // light mint (#F0F7F4)
+    doc.setDrawColor(195, 221, 210); // #C3DDD2
+    doc.setLineWidth(0.3);
+    doc.roundedRect(marginX, y, contentWidth, boxHeight, 2, 2, 'FD');
+
+    doc.setTextColor(28, 28, 26);
+    doc.text(fnLines, marginX + 5, y + 5);
+    y += boxHeight + 5;
+  }
+
+  // Section heading: Options to discuss together
+  ensureSpace(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11.5);
+  doc.setTextColor(28, 68, 54);
+  doc.text('Options to discuss together', marginX, y);
+  y += 5.5;
+
+  // Course cards
+  topCourses.forEach((course) => {
+    const ps = course.parentSummary || {};
+    const titleText = sanitizePdfText(course.name);
+    const whyText = sanitizePdfText(ps.whyOneSentence || '');
+    const careerText = sanitizePdfText(ps.careerBrief || '');
+    const skillsText = sanitizePdfText(ps.skillsBrief || '');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    const titleLines = doc.splitTextToSize(titleText, contentWidth - 10);
+
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8.5);
+    const whyLines = doc.splitTextToSize(whyText, contentWidth - 10);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    const careerLines = doc.splitTextToSize(careerText, contentWidth - 10);
+    const skillsLines = doc.splitTextToSize(skillsText, contentWidth - 10);
+
+    // Calculate card height dynamically
+    let cardHeight = 7;
+    cardHeight += (titleLines.length * 4.8);
+    if (whyLines.length) cardHeight += (whyLines.length * 3.8) + 2.5;
+    cardHeight += 4.5 + (careerLines.length * 3.5) + 2;
+    cardHeight += 4.5 + (skillsLines.length * 3.5);
+    cardHeight += 3;
+
+    ensureSpace(cardHeight + 4);
+
+    // Card background & border
+    doc.setFillColor(250, 250, 247); // #FAFAF7
+    doc.setDrawColor(229, 228, 222); // #E5E4DE
+    doc.setLineWidth(0.3);
+    doc.roundedRect(marginX, y, contentWidth, cardHeight, 2.5, 2.5, 'FD');
+
+    let cardY = y + 5;
+
+    // Course Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(28, 68, 54);
+    doc.text(titleLines, marginX + 5, cardY);
+    cardY += (titleLines.length * 4.8);
+
+    // Why
+    if (whyLines.length) {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8.5);
+      doc.setTextColor(92, 91, 86);
+      doc.text(whyLines, marginX + 5, cardY);
+      cardY += (whyLines.length * 3.8) + 2;
+    }
+
+    // Career Reality
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(45, 106, 83);
+    doc.text('CAREER REALITY IN NIGERIA', marginX + 5, cardY);
+    cardY += 3.5;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(28, 28, 26);
+    doc.text(careerLines, marginX + 5, cardY);
+    cardY += (careerLines.length * 3.5) + 2.5;
+
+    // Skills
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(45, 106, 83);
+    doc.text("SKILLS THEY'LL BUILD", marginX + 5, cardY);
+    cardY += 3.5;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(28, 28, 26);
+    doc.text(skillsLines, marginX + 5, cardY);
+
+    y += cardHeight + 3.5;
+  });
+
+  // Discussion starters
+  const selectedLimits = (answers[3] || []).filter(k => k !== 'no_limits');
+  const starters = (courses && courses.parentDiscussionStarters) || {};
+  const activeStarters = selectedLimits.filter(k => starters[k]).map(k => sanitizePdfText(starters[k]));
+
+  if (activeStarters.length > 0) {
+    ensureSpace(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(28, 68, 54);
+    doc.text('Starting the conversation', marginX, y);
+    y += 5;
+
+    activeStarters.forEach(text => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(28, 28, 26);
+      const lines = doc.splitTextToSize(text, contentWidth - 6);
+      ensureSpace((lines.length * 3.6) + 3);
+
+      doc.setFillColor(45, 106, 83);
+      doc.circle(marginX + 2, y - 1, 0.8, 'F');
+
+      doc.text(lines, marginX + 5, y);
+      y += (lines.length * 3.5) + 2;
+    });
+  }
+
+  // Disclaimer
+  ensureSpace(14);
+  y += 2;
+  doc.setDrawColor(229, 228, 222);
+  doc.setLineWidth(0.3);
+  doc.line(marginX, y, marginX + contentWidth, y);
+  y += 4.5;
+
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(7.2);
+  doc.setTextColor(92, 91, 86);
+  const disc = 'Verify requirements with official sources (JAMB, the university) and talk to a professional in the field. Hodos contains no invented statistics, cut-off marks, or salary claims.';
+  const discLines = doc.splitTextToSize(disc, contentWidth);
+  doc.text(discLines, marginX, y);
+
+  // Footer on all pages
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(140, 140, 135);
+    doc.text('Hodos — Choose your path well', marginX, pageHeight - 10);
+    doc.text(`Page ${i} of ${totalPages}`, marginX + contentWidth - 14, pageHeight - 10);
+  }
+
+  return doc;
 }
 
 function fallbackCopy(panel, btn) {

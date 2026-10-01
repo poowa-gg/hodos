@@ -74,6 +74,7 @@ open with a note about family expectations.
 | `style.css` | All styling. CSS custom properties for the palette at the top. `@media print` rules at the bottom. |
 | `app.js` | All JavaScript. Loads `courses.json`, renders each screen, runs scoring and worry matching, handles all events. |
 | `courses.json` | All course data, question options, worry themes, discussion starters, next-steps checklist. |
+| `jspdf.umd.min.js` | Client-side PDF generator used to download the Parent Summary directly without needing a printer. |
 
 No `node_modules/`, no build step, no server required.
 

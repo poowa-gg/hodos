@@ -450,15 +450,130 @@ function renderCourseCard(course, rankIndex) {
     </article>`;
 }
 
-// ─── Parent Mode tab (stub — full implementation in Slice 4) ──────────────────
+// ─── Parent Mode tab ──────────────────────────────────────────────────────────
 function renderParentsTab() {
-  return `<p style="padding:24px 0;font-family:sans-serif;color:#6B6B6B;font-size:0.9rem;">
-    Parent Mode coming in Slice 4.
+  const hasFamilyExpects = (answers[3] || []).includes('family_expects');
+
+  // Opening salutation
+  const salutation = `<p class="parent-salutation">
+    A summary prepared by your child to share their university course ideas with you.
   </p>`;
+
+  // Family-expects note (only when that limit was selected)
+  const familyNote = hasFamilyExpects
+    ? `<div class="parent-family-note" role="note">
+        Your child has noted that family expectations are a factor in this decision.
+        The courses below are the ones that match their actual strengths and interests.
+        This summary is a starting point for an open conversation — not a verdict.
+        The family conversation, not this app, makes the final decision.
+       </div>`
+    : '';
+
+  // Top 3 as "options to discuss together" — no rank numbers
+  const options = topCourses.map(course => {
+    const ps = course.parentSummary || {};
+    return `
+      <article class="parent-option" aria-label="${escAttr(course.name)}">
+        <h2 class="parent-option__title">${escHtml(course.name)}</h2>
+        <p class="parent-option__why">${escHtml(ps.whyOneSentence || '')}</p>
+        <p class="parent-option__section-title">Career reality in Nigeria</p>
+        <p class="parent-option__section-body">${escHtml(ps.careerBrief || '')}</p>
+        <p class="parent-option__section-title">Skills they'll build</p>
+        <p class="parent-option__section-body">${escHtml(ps.skillsBrief || '')}</p>
+      </article>`;
+  }).join('');
+
+  // Discussion starters keyed to selected limits (exclude no_limits)
+  const selectedLimits = (answers[3] || []).filter(k => k !== 'no_limits');
+  const starters = courses.parentDiscussionStarters || {};
+  const starterItems = selectedLimits
+    .filter(k => starters[k])
+    .map(k => `<li>${escHtml(starters[k])}</li>`)
+    .join('');
+  const discussionSection = starterItems
+    ? `<section class="parent-discussion" aria-label="Discussion starters">
+        <h2 class="parent-discussion__title">Starting the conversation</h2>
+        <ul class="parent-discussion__list">${starterItems}</ul>
+       </section>`
+    : '';
+
+  // Disclaimer
+  const disclaimer = `
+    <p class="disclaimer" style="margin-top:24px;">
+      Verify requirements with official sources (JAMB, the university)
+      and talk to a professional in the field.
+    </p>`;
+
+  // Action toolbar
+  const toolbar = `
+    <div class="parent-toolbar" role="group" aria-label="Share options">
+      <button class="btn-secondary" id="copy-btn" aria-label="Copy parent summary text">
+        Copy text
+      </button>
+      <button class="btn-secondary" id="print-btn" aria-label="Print or save as PDF">
+        Print / save as PDF
+      </button>
+    </div>`;
+
+  return salutation + familyNote
+    + `<section aria-label="Options to discuss together">
+        <h2 style="font-family:var(--font-serif);font-size:1.15rem;font-weight:normal;
+                   color:var(--color-brand);margin-bottom:16px;">
+          Options to discuss together
+        </h2>
+        ${options}
+       </section>`
+    + discussionSection + disclaimer + toolbar;
 }
 
-// stub — wired in Slice 4
-function attachParentActions() {}
+function attachParentActions() {
+  // Copy button
+  const copyBtn = document.getElementById('copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const panel = document.getElementById('tab-parents');
+      const text  = panel ? panel.innerText : '';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy text'; }, 2000);
+          })
+          .catch(() => fallbackCopy(panel, copyBtn));
+      } else {
+        fallbackCopy(panel, copyBtn);
+      }
+    });
+  }
+
+  // Print button
+  const printBtn = document.getElementById('print-btn');
+  if (printBtn) {
+    printBtn.addEventListener('click', () => {
+      // Ensure Parent Mode tab is active before printing
+      const parentsBtn = document.getElementById('tab-parents-btn');
+      if (parentsBtn) parentsBtn.click();
+      setTimeout(() => window.print(), 100);
+    });
+  }
+}
+
+function fallbackCopy(panel, btn) {
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(panel);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy text'; }, 2000);
+  } catch {
+    btn.textContent = 'Select the text above and copy manually';
+    setTimeout(() => { btn.textContent = 'Copy text'; }, 3500);
+  }
+}
 
 // ─── Label helpers ────────────────────────────────────────────────────────────
 // Map option keys back to human-readable labels from courses.json

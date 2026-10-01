@@ -1,0 +1,26 @@
+{
+  "questions": [],
+  "courses": [
+    {
+      "id": "medicine",
+      "name": "Medicine",
+      "tiebreakOrder": 1,
+      "subjectKeys":  [],
+      "interestKeys": [],
+      "workKeys":     [],
+      "jambRequired": []
+    },
+    {
+      "id": "law",
+      "name": "Law",
+      "tiebreakOrder": 2,
+      "subjectKeys":  [],
+      "interestKeys": [],
+      "workKeys":     [],
+      "jambRequired": []
+    }
+  ],
+  "worryThemes": [],
+  "parentDiscussionStarters": {},
+  "nextStepsChecklist": []
+}

@@ -358,13 +358,13 @@ function renderCourseCard(course, rankIndex) {
   const card = course.card;
   if (!card) return '';
 
-  // JAMB mismatch alert
+  // JAMB mismatch alert — soft, using typicalJambSubjects
   const selectedSubjects = answers[0];
-  const missingJamb = (course.jambRequired || []).filter(k => !selectedSubjects.includes(k));
+  const typicalJamb = course.typicalJambSubjects || course.jambRequired || [];
+  const missingJamb = typicalJamb.filter(k => !selectedSubjects.includes(k));
   const jambAlert = missingJamb.length
-    ? `<p class="jamb-alert">⚠ Your selected subjects don't include
-        <strong>${missingJamb.map(k => subjectLabel(k)).join(', ')}</strong>.
-        Verify this requirement with JAMB before applying.</p>`
+    ? `<p class="jamb-alert">These subjects differ from the typical combination for this course.
+        Confirm with JAMB iBASS.</p>`
     : '';
 
   // Limit notes — only for limits the student selected, skip no_limits and family_expects
@@ -397,7 +397,8 @@ function renderCourseCard(course, rankIndex) {
     : '';
 
   // Match rationale — show which of the student's picks triggered this card
-  const triggeredSubjects  = selectedSubjects.filter(k  => course.subjectKeys.includes(k)).map(k => subjectLabel(k));
+  const scoringKeys        = course.scoringSubjects || course.subjectKeys || [];
+  const triggeredSubjects  = selectedSubjects.filter(k  => scoringKeys.includes(k)).map(k => subjectLabel(k));
   const triggeredInterests = answers[1].filter(k  => course.interestKeys.includes(k)).map(k => interestLabel(k));
   const matchLine = [...triggeredSubjects, ...triggeredInterests].length
     ? `Matched on: ${[...triggeredSubjects, ...triggeredInterests].join(', ')}.`
@@ -417,8 +418,9 @@ function renderCourseCard(course, rankIndex) {
       <div class="course-card__section">
         <p class="course-card__section-title">JAMB subject combination</p>
         <p class="course-card__section-body">
-          ${withVerifyNote(escHtml((course.jambRequired || []).map(k => subjectLabel(k)).join(', ') || 'VERIFY'))}
+          ${escHtml(typicalJamb.map(k => subjectLabel(k)).join(', ') || '—')}
         </p>
+        ${course.subjectsNote ? `<p class="verify-note">${escHtml(course.subjectsNote)}</p>` : ''}
         ${jambAlert}
       </div>
 
@@ -603,7 +605,9 @@ function score(answers) {
   const selectedWork      = answers[2];
 
   const scored = courses.courses.map(course => {
-    const subjectMatches  = selectedSubjects.filter(k  => course.subjectKeys.includes(k)).length;
+    // Use scoringSubjects (subject-fit keys) if present, fall back to subjectKeys
+    const scoringKeys     = course.scoringSubjects || course.subjectKeys || [];
+    const subjectMatches  = selectedSubjects.filter(k  => scoringKeys.includes(k)).length;
     const interestMatches = selectedInterests.filter(k => course.interestKeys.includes(k)).length;
     const workMatches     = selectedWork.filter(k      => course.workKeys.includes(k)).length;
 
@@ -653,13 +657,12 @@ function escAttr(str) {
   return escHtml(str);
 }
 
-// Replace [VERIFY] in already-escaped HTML with a small muted note.
+// Replace [VERIFY] or bare VERIFY in already-escaped HTML with a small muted note.
 // Call AFTER escHtml so the brackets are already safe.
 function withVerifyNote(escapedStr) {
-  return escapedStr.replace(
-    /\[VERIFY\]/g,
-    '<span class="verify-note">(confirm with official sources)</span>'
-  );
+  return escapedStr
+    .replace(/\[VERIFY\]/g, '<span class="verify-note">(confirm with official sources)</span>')
+    .replace(/\bVERIFY\b/g, '<span class="verify-note">(confirm with official sources)</span>');
 }
 
 // ─── Start ────────────────────────────────────────────────────────────────────

@@ -131,7 +131,7 @@ body {
 .btn-ghost {
   background: none;
   border: none;
-  color: var(--color-muted);
+  color: var(--color-text);   /* darkened — was muted, now readable */
   font-family: var(--font-sans);
   font-size: 0.85rem;
   cursor: pointer;
@@ -140,7 +140,7 @@ body {
 }
 
 .btn-ghost:hover {
-  color: var(--color-text);
+  color: var(--color-brand);
 }
 
 /* ─── Question screen ────────────────────────────────────────────────────────── */
@@ -465,7 +465,7 @@ body {
 /* Disclaimer */
 .disclaimer {
   font-size: 0.78rem;
-  color: var(--color-muted);
+  color: var(--color-text);   /* darkened — readable on screen and in print */
   line-height: 1.5;
   margin-top: 24px;
   padding-top: 16px;
@@ -569,9 +569,10 @@ body {
   border: 1.5px solid var(--color-brand);
   border-radius: 999px;
   background: transparent;
-  color: var(--color-brand);
+  color: var(--color-brand);   /* forest green — dark enough on cream and in print */
   font-family: var(--font-sans);
   font-size: 0.9rem;
+  font-weight: 600;             /* added weight for legibility */
   cursor: pointer;
   min-height: 44px;
   transition: background 0.12s;
@@ -627,6 +628,13 @@ body {
   clip: rect(0,0,0,0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ─── Verify note (inline VERIFY flag replacement) ──────────────────────────── */
+.verify-note {
+  font-size: 0.78em;
+  color: var(--color-muted);
+  font-style: italic;
 }
 
 /* ─── Print styles (Parent Mode only) ───────────────────────────────────────── */

@@ -411,20 +411,20 @@ function renderCourseCard(course, rankIndex) {
 
       <div class="course-card__section">
         <p class="course-card__section-title">What you'll actually study</p>
-        <p class="course-card__section-body">${escHtml(card.whatYouStudy || '')}</p>
+        <p class="course-card__section-body">${withVerifyNote(escHtml(card.whatYouStudy || ''))}</p>
       </div>
 
       <div class="course-card__section">
         <p class="course-card__section-title">JAMB subject combination</p>
         <p class="course-card__section-body">
-          ${escHtml((course.jambRequired || []).map(k => subjectLabel(k)).join(', ') || 'VERIFY')}
+          ${withVerifyNote(escHtml((course.jambRequired || []).map(k => subjectLabel(k)).join(', ') || 'VERIFY'))}
         </p>
         ${jambAlert}
       </div>
 
       <div class="course-card__section">
         <p class="course-card__section-title">Nigerian career reality</p>
-        <p class="course-card__section-body">${escHtml(card.careerReality || '')}</p>
+        <p class="course-card__section-body">${withVerifyNote(escHtml(card.careerReality || ''))}</p>
       </div>
 
       <div class="course-card__section">
@@ -434,7 +434,7 @@ function renderCourseCard(course, rankIndex) {
 
       <div class="course-card__section">
         <p class="course-card__section-title">Honest risks</p>
-        <p class="course-card__section-body">${escHtml(card.honestRisks || '')}</p>
+        <p class="course-card__section-body">${withVerifyNote(escHtml(card.honestRisks || ''))}</p>
         ${limitSection}
       </div>
 
@@ -477,7 +477,7 @@ function renderParentsTab() {
         <h2 class="parent-option__title">${escHtml(course.name)}</h2>
         <p class="parent-option__why">${escHtml(ps.whyOneSentence || '')}</p>
         <p class="parent-option__section-title">Career reality in Nigeria</p>
-        <p class="parent-option__section-body">${escHtml(ps.careerBrief || '')}</p>
+        <p class="parent-option__section-body">${withVerifyNote(escHtml(ps.careerBrief || ''))}</p>
         <p class="parent-option__section-title">Skills they'll build</p>
         <p class="parent-option__section-body">${escHtml(ps.skillsBrief || '')}</p>
       </article>`;
@@ -510,8 +510,8 @@ function renderParentsTab() {
       <button class="btn-secondary" id="copy-btn" aria-label="Copy parent summary text">
         Copy text
       </button>
-      <button class="btn-secondary" id="print-btn" aria-label="Print or save as PDF">
-        Print / save as PDF
+      <button class="btn-secondary" id="print-btn" aria-label="Save as PDF">
+        Save as PDF
       </button>
     </div>`;
 
@@ -651,6 +651,15 @@ function escHtml(str) {
 
 function escAttr(str) {
   return escHtml(str);
+}
+
+// Replace [VERIFY] in already-escaped HTML with a small muted note.
+// Call AFTER escHtml so the brackets are already safe.
+function withVerifyNote(escapedStr) {
+  return escapedStr.replace(
+    /\[VERIFY\]/g,
+    '<span class="verify-note">(confirm with official sources)</span>'
+  );
 }
 
 // ─── Start ────────────────────────────────────────────────────────────────────

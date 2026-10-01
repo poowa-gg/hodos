@@ -254,14 +254,72 @@ function advanceStep() {
 }
 
 function finishQuestionnaire() {
-  // Slice 3 will wire scoring here; for now show a placeholder
+  // Run scoring and worry matching
+  topCourses       = score(answers);
+  worryReassurance = matchWorry(answers[4]);
+
+  // Slice 3b renders the full results UI; for now show a verification dump
   document.getElementById('app').innerHTML = `
     ${headerHTML()}
-    <main style="padding:40px 0;font-family:sans-serif;color:#6B6B6B;">
-      <p>Results coming in Slice 3. Your answers were captured:</p>
-      <pre style="font-size:0.75rem;margin-top:16px;white-space:pre-wrap;">${JSON.stringify(answers, null, 2)}</pre>
+    <main style="padding:40px 0;font-family:sans-serif;color:#1A1A1A;">
+      <p style="margin-bottom:12px;"><strong>Top 3 courses:</strong></p>
+      <ol style="padding-left:20px;margin-bottom:24px;">
+        ${topCourses.map(c => `<li>${escHtml(c.name)} (score: ${c._score})</li>`).join('')}
+      </ol>
+      <p><strong>Worry reassurance:</strong> ${worryReassurance ? escHtml(worryReassurance) : '(none)'}</p>
+      <p style="margin-top:24px;font-size:0.8rem;color:#888;">Full results UI coming in Slice 3b.</p>
     </main>`;
   attachStartOver();
+}
+
+// ─── Scoring engine ───────────────────────────────────────────────────────────
+// Weights per spec: subjects ×5, interests ×4, work setting ×2
+const WEIGHTS = { subject: 5, interest: 4, work: 2 };
+
+/**
+ * score(answers) → array of 3 course objects, ranked highest first.
+ * Each returned object is the original course data extended with _score.
+ */
+function score(answers) {
+  const selectedSubjects  = answers[0];
+  const selectedInterests = answers[1];
+  const selectedWork      = answers[2];
+
+  const scored = courses.courses.map(course => {
+    const subjectMatches  = selectedSubjects.filter(k  => course.subjectKeys.includes(k)).length;
+    const interestMatches = selectedInterests.filter(k => course.interestKeys.includes(k)).length;
+    const workMatches     = selectedWork.filter(k      => course.workKeys.includes(k)).length;
+
+    const total = (subjectMatches  * WEIGHTS.subject)
+                + (interestMatches * WEIGHTS.interest)
+                + (workMatches     * WEIGHTS.work);
+
+    return { ...course, _score: total };
+  });
+
+  // Sort descending by score, then ascending by tiebreakOrder for ties
+  scored.sort((a, b) => {
+    if (b._score !== a._score) return b._score - a._score;
+    return a.tiebreakOrder - b.tiebreakOrder;
+  });
+
+  return scored.slice(0, 3);
+}
+
+// ─── Worry matcher ────────────────────────────────────────────────────────────
+/**
+ * matchWorry(text) → reassurance string, or null if no match / empty input.
+ * First matching theme wins. Case-insensitive substring search.
+ */
+function matchWorry(text) {
+  if (!text || !text.trim()) return null;
+  const lower = text.toLowerCase();
+  for (const theme of courses.worryThemes) {
+    if (theme.triggers.some(trigger => lower.includes(trigger))) {
+      return theme.reassurance;
+    }
+  }
+  return null;
 }
 
 // ─── Utility helpers ──────────────────────────────────────────────────────────

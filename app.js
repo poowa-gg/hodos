@@ -257,19 +257,221 @@ function finishQuestionnaire() {
   // Run scoring and worry matching
   topCourses       = score(answers);
   worryReassurance = matchWorry(answers[4]);
+  currentStep      = 6;
+  renderResults();
+}
 
-  // Slice 3b renders the full results UI; for now show a verification dump
+// ─── Results screen ───────────────────────────────────────────────────────────
+function renderResults() {
   document.getElementById('app').innerHTML = `
     ${headerHTML()}
-    <main style="padding:40px 0;font-family:sans-serif;color:#1A1A1A;">
-      <p style="margin-bottom:12px;"><strong>Top 3 courses:</strong></p>
-      <ol style="padding-left:20px;margin-bottom:24px;">
-        ${topCourses.map(c => `<li>${escHtml(c.name)} (score: ${c._score})</li>`).join('')}
-      </ol>
-      <p><strong>Worry reassurance:</strong> ${worryReassurance ? escHtml(worryReassurance) : '(none)'}</p>
-      <p style="margin-top:24px;font-size:0.8rem;color:#888;">Full results UI coming in Slice 3b.</p>
+    <main class="results-screen" aria-label="Your results">
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn tab-btn--active" id="tab-brief-btn"
+          role="tab" aria-selected="true" aria-controls="tab-brief">My brief</button>
+        <button class="tab-btn" id="tab-parents-btn"
+          role="tab" aria-selected="false" aria-controls="tab-parents">For my parents</button>
+      </div>
+
+      <div id="tab-brief" class="tab-panel tab-panel--active" role="tabpanel" aria-labelledby="tab-brief-btn">
+        ${renderBriefTab()}
+      </div>
+
+      <div id="tab-parents" class="tab-panel" role="tabpanel" aria-labelledby="tab-parents-btn">
+        ${renderParentsTab()}
+      </div>
     </main>`;
+
   attachStartOver();
+  attachTabSwitching();
+  attachParentActions();
+}
+
+function attachTabSwitching() {
+  const briefBtn   = document.getElementById('tab-brief-btn');
+  const parentsBtn = document.getElementById('tab-parents-btn');
+  const briefPanel   = document.getElementById('tab-brief');
+  const parentsPanel = document.getElementById('tab-parents');
+
+  briefBtn.addEventListener('click', () => {
+    briefBtn.classList.add('tab-btn--active');
+    briefBtn.setAttribute('aria-selected', 'true');
+    parentsBtn.classList.remove('tab-btn--active');
+    parentsBtn.setAttribute('aria-selected', 'false');
+    briefPanel.classList.add('tab-panel--active');
+    parentsPanel.classList.remove('tab-panel--active');
+  });
+
+  parentsBtn.addEventListener('click', () => {
+    parentsBtn.classList.add('tab-btn--active');
+    parentsBtn.setAttribute('aria-selected', 'true');
+    briefBtn.classList.remove('tab-btn--active');
+    briefBtn.setAttribute('aria-selected', 'false');
+    parentsPanel.classList.add('tab-panel--active');
+    briefPanel.classList.remove('tab-panel--active');
+  });
+
+  // CTA card at foot of brief also switches tabs
+  const ctaBtn = document.getElementById('cta-to-parents');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', () => parentsBtn.click());
+  }
+}
+
+// ─── My Brief tab ─────────────────────────────────────────────────────────────
+function renderBriefTab() {
+  const worryBlock = worryReassurance && answers[4]
+    ? `<div class="worry-quote" aria-label="Your worry and our response">
+        <p class="worry-quote__label">You told us</p>
+        <p class="worry-quote__text">"${escHtml(answers[4])}"</p>
+        <p class="worry-quote__reassurance">${escHtml(worryReassurance)}</p>
+       </div>`
+    : '';
+
+  const cards = topCourses.map((course, i) => renderCourseCard(course, i)).join('');
+
+  const nextSteps = `
+    <section class="next-steps" aria-label="Next steps">
+      <h2 class="next-steps__title">Next steps</h2>
+      <ol class="next-steps__list">
+        ${courses.nextStepsChecklist.map(item => `<li>${escHtml(item)}</li>`).join('')}
+      </ol>
+    </section>`;
+
+  const cta = `
+    <button class="cta-card" id="cta-to-parents" aria-label="See the parent summary">
+      <span class="cta-card__text">Ready to talk to your family? See the parent summary</span>
+      <span class="cta-card__arrow" aria-hidden="true">→</span>
+    </button>`;
+
+  const disclaimer = `
+    <p class="disclaimer">
+      Verify requirements with official sources (JAMB, the university)
+      and talk to a professional in the field.
+    </p>`;
+
+  return worryBlock + cards + nextSteps + cta + disclaimer;
+}
+
+function renderCourseCard(course, rankIndex) {
+  const rankLabel = ['First match', 'Second match', 'Third match'][rankIndex] || `Match ${rankIndex + 1}`;
+  const card = course.card;
+  if (!card) return '';
+
+  // JAMB mismatch alert
+  const selectedSubjects = answers[0];
+  const missingJamb = (course.jambRequired || []).filter(k => !selectedSubjects.includes(k));
+  const jambAlert = missingJamb.length
+    ? `<p class="jamb-alert">⚠ Your selected subjects don't include
+        <strong>${missingJamb.map(k => subjectLabel(k)).join(', ')}</strong>.
+        Verify this requirement with JAMB before applying.</p>`
+    : '';
+
+  // Limit notes — only for limits the student selected, skip no_limits and family_expects
+  // (family_expects drives Parent Mode tone in Slice 4, not individual card notes)
+  const selectedLimits = (answers[3] || []).filter(k => k !== 'no_limits' && k !== 'family_expects');
+  const limitNoteItems = selectedLimits
+    .filter(k => card.limitNotes && card.limitNotes[k])
+    .map(k => `<p class="limit-note">${escHtml(card.limitNotes[k])}</p>`)
+    .join('');
+  const limitSection = limitNoteItems
+    ? `<div class="limit-notes" aria-label="Notes on your situation">${limitNoteItems}</div>`
+    : '';
+
+  // Skills list
+  const skillsList = Array.isArray(card.skillsToStack)
+    ? `<ul class="skills-list">${card.skillsToStack.map(s => `<li>${escHtml(s)}</li>`).join('')}</ul>`
+    : `<p class="course-card__section-body">${escHtml(card.skillsToStack || '')}</p>`;
+
+  // Mentor questions
+  const mentorList = Array.isArray(card.mentorQuestions)
+    ? `<ul class="mentor-list">${card.mentorQuestions.map(q => `<li>${escHtml(q)}</li>`).join('')}</ul>`
+    : `<p class="course-card__section-body">${escHtml(card.mentorQuestions || '')}</p>`;
+
+  // "If this doesn't work out" — only reference courses that exist in our 13
+  const fallback = card.ifNotWorkedOut
+    ? `<p class="course-card__section-body">
+        ${escHtml(card.ifNotWorkedOut.relatedCourses.join(' or '))}.
+        ${escHtml(card.ifNotWorkedOut.verifyNote)}
+       </p>`
+    : '';
+
+  // Match rationale — show which of the student's picks triggered this card
+  const triggeredSubjects  = selectedSubjects.filter(k  => course.subjectKeys.includes(k)).map(k => subjectLabel(k));
+  const triggeredInterests = answers[1].filter(k  => course.interestKeys.includes(k)).map(k => interestLabel(k));
+  const matchLine = [...triggeredSubjects, ...triggeredInterests].length
+    ? `Matched on: ${[...triggeredSubjects, ...triggeredInterests].join(', ')}.`
+    : card.rationale;
+
+  return `
+    <article class="course-card" aria-label="${escAttr(course.name)} course details">
+      <p class="course-card__rank">${escHtml(rankLabel)}</p>
+      <h2 class="course-card__title">${escHtml(course.name)}</h2>
+      <p class="course-card__rationale">${escHtml(matchLine)}</p>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">What you'll actually study</p>
+        <p class="course-card__section-body">${escHtml(card.whatYouStudy || '')}</p>
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">JAMB subject combination</p>
+        <p class="course-card__section-body">
+          ${escHtml((course.jambRequired || []).map(k => subjectLabel(k)).join(', ') || 'VERIFY')}
+        </p>
+        ${jambAlert}
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">Nigerian career reality</p>
+        <p class="course-card__section-body">${escHtml(card.careerReality || '')}</p>
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">Skills to stack</p>
+        ${skillsList}
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">Honest risks</p>
+        <p class="course-card__section-body">${escHtml(card.honestRisks || '')}</p>
+        ${limitSection}
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">If this doesn't work out</p>
+        ${fallback}
+      </div>
+
+      <div class="course-card__section">
+        <p class="course-card__section-title">Questions to ask a professional</p>
+        ${mentorList}
+      </div>
+    </article>`;
+}
+
+// ─── Parent Mode tab (stub — full implementation in Slice 4) ──────────────────
+function renderParentsTab() {
+  return `<p style="padding:24px 0;font-family:sans-serif;color:#6B6B6B;font-size:0.9rem;">
+    Parent Mode coming in Slice 4.
+  </p>`;
+}
+
+// stub — wired in Slice 4
+function attachParentActions() {}
+
+// ─── Label helpers ────────────────────────────────────────────────────────────
+// Map option keys back to human-readable labels from courses.json
+function subjectLabel(key) {
+  const q = courses.questions[0];
+  const opt = q && q.options ? q.options.find(o => o.key === key) : null;
+  return opt ? opt.label : key;
+}
+
+function interestLabel(key) {
+  const q = courses.questions[1];
+  const opt = q && q.options ? q.options.find(o => o.key === key) : null;
+  return opt ? opt.label : key;
 }
 
 // ─── Scoring engine ───────────────────────────────────────────────────────────

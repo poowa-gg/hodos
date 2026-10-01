@@ -551,7 +551,7 @@ function attachParentActions() {
   // Save as PDF button (direct download without printer dialog)
   const pdfBtn = document.getElementById('pdf-btn') || document.getElementById('print-btn');
   if (pdfBtn) {
-    pdfBtn.addEventListener('click', () => {
+    pdfBtn.addEventListener('click', async () => {
       const originalText = pdfBtn.textContent;
       pdfBtn.textContent = 'Saving PDF…';
       try {
@@ -560,7 +560,7 @@ function attachParentActions() {
           throw new Error('jsPDF library not loaded');
         }
         const doc = generateParentSummaryPDF(jsPdfConstructor);
-        doc.save('Hodos-Parent-Summary.pdf');
+        await savePdfFile(doc, 'Hodos-Parent-Summary.pdf');
         pdfBtn.textContent = 'PDF Saved!';
         setTimeout(() => { pdfBtn.textContent = originalText; }, 2000);
       } catch (err) {
@@ -570,6 +570,51 @@ function attachParentActions() {
       }
     });
   }
+}
+
+// ─── Direct PDF Download / Mobile Save Helper ─────────────────────────────────
+async function savePdfFile(doc, filename) {
+  const blob = doc.output('blob');
+
+  // If on mobile device with Web Share API supporting files, use native share/save sheet
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+  if (isMobile && navigator.share && navigator.canShare) {
+    try {
+      const file = new File([blob], filename, { type: 'application/pdf' });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Hodos — Parent Summary',
+          text: 'Options for My University Journey — Summary for Parents'
+        });
+        return;
+      }
+    } catch (shareErr) {
+      if (shareErr.name === 'AbortError') return; // User cancelled share modal
+      console.warn('Native mobile share failed, falling back to direct download:', shareErr);
+    }
+  }
+
+  // Standard synchronous DOM-attached anchor download for desktop and mobile browsers
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+
+  // Trigger click synchronously within the user gesture context
+  a.click();
+
+  // Allow browser time to register download before releasing blob URL
+  setTimeout(() => {
+    try {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+      URL.revokeObjectURL(url);
+    } catch (_) {}
+  }, 2000);
 }
 
 // ─── PDF Generation (Parent Mode) ─────────────────────────────────────────────
